@@ -2,10 +2,10 @@
 
 Struttura:
      
-     - descrizione del workflow dell'azienda
-     - descrizione dell'officina pozzo
+     - descrizione del workflow dell'azienda      x
+     - descrizione dell'officina pozzo            x
      - descrizione dell'ospedale di giaveno
-     - messe in servizio di impianti 
+     - messe in servizio di impianti              x
      - altro
      - conoscenze acquisite
    
@@ -30,6 +30,8 @@ Struttura:
   - [Messe in servizio](#messe-in-servizio)
     - [Condominio caselle, via gibellini](#condominio-caselle-via-gibellini)
     - [Scuola primaria Luigi Einaudi, Aosta](#scuola-primaria-luigi-einaudi-aosta)
+  - [Sopraluogo per un impianto di Illuminazione alla Fondazione Teatro Ragazzi e Giovani Onlus](#sopraluogo-per-un-impianto-di-illuminazione-alla-fondazione-teatro-ragazzi-e-giovani-onlus)
+- [Conoscenze acquisite](#conoscenze-acquisite)
 
 <br><br>
 
@@ -72,7 +74,7 @@ Gli estensori di porte più usati sono il [MIX38-IP](https://www.ismacontrolli.c
 Vengono collegati al PLC principale tramite interfaccia Modbus e permettono di estendere virtualmente, all'interno del Sedona Framework, le porte fisiche del controllore.
 
 I display più utilizzati sono il [GTSmart-07](https://www.ismacontrolli.com/en/gtsmart-07.html) e il [GTSmart-010](https://www.ismacontrolli.com/pl/gtsmart-010.html).  
-Questi dispositivi sono unità di elaborazione indipendenti dotate di touchscreen con hardware non specificato dal produttore, che montano Linux RT. Per programmarli ci si serve di un programma chiamato JMobile che permette di importare le variabili create sul PLC e di modificarle a piacimento attraverso un'interfaccia grafica.  
+Questi dispositivi sono unità di elaborazione indipendenti dotate di touchscreen con hardware non specificato dal produttore, che montano Linux RT. Per programmarli ci si serve di un software chiamato JMobile che permette di importare le variabili create sul PLC e di modificarle a piacimento attraverso un'interfaccia grafica.  
 Quest'ultima viene sviluppata anch'essa su questo software che, tramite un editor grafico, permette di sviluppare in modo semplice un'interpretazione grafica dell'impianto e del suo funzionamento in modo da mettere nelle mani del cliente le sue principali funzioni.  
   
 
@@ -91,7 +93,7 @@ Gli schemi in questione vengono disegnati tramite software come DraftSight e, do
 
 ### Fase di sviluppo della logica del PLC
 
-Parte principale del tirocinio svolto in cui si determina come il sistema si comporta tramite la "scrittura" della logica tramite il Sedona Framework. 
+Parte principale del tirocinio svolto in cui si determina come il sistema si comporta tramite la realizzazione della logica tramite il Sedona Framework. 
 
 
 ### Fase di sviluppo dell'interfaccia grafica da visualizzare sul Display
@@ -130,7 +132,16 @@ Come primo impianto realizzato, la logica di funzionamento prevede:
 una lettura delle temperature dal VRF, la creazione di una schedule oraria per l'attivazione dell'impianto e la regolazione dei setpoint di velocità delle ventole dei recuperatori.     
 La maggior parte del tempo impiegato a sviluppare questo progetto è stata spesa nella comprensione del funzionamento di un impianto di climatizzazione, dei programmi utilizzati, quali JMobile, ISMATool e YABE, dei protocolli BACnet e Modbus e del Sedona Framework.       
 Alla fine della programmazione il sistema è in grado di modificare i setpoint di velocità delle ventole dei recuperatori e di temperatura di 8 ambienti differenti. Questo sia tramite il display integrato nel PLC che quello del touchscreen.      
-Purtroppo non ho avuto la possibilità di presediere durante la messa in servizio del sistema.
+Purtroppo non ho avuto la possibilità di presediere durante la messa in servizio del sistema.  
+L'impianto ha tre possibili stati di funzionamento: On, Off e Auto (in modalità auto si segue un programma orario impostato dall'utente). 
+
+![enable](./immagini/Screenshot%202025-02-21%20171153.png)    
+
+Se il sistema è abilitato, in base ai setpoint impostati dall'utente, viene inviato il comando inerente alla velocità dei ventilatori. Il segnale viene inviato dal PLC al controllore del recuperatore come segnale analogico con ampiezza che varia linearmente da zero Volt, potenza dissipata dai ventilatori nulla, fino a dieci Volt, potenza dissipata massima.  
+
+![setpoint ventilatori](./immagini/Screenshot%202025-02-21%20171140.png)   
+
+I setpoint di temperatura inerenti ai vari ambienti vengono semplicemente acquisiti dal touchscreen, o dal display LCD integrato nel PLC come sistema di backup, e inviati, tramite protocollo Modbus, al VRF.    
 
 
 # Secondo impianto
@@ -163,8 +174,18 @@ I touchscreen sono disposti in due ambienti diversi per controllarne la temperat
 All'inizio dell'operazione ci si è resi conto che la rete LAN non era cablata in modo corretto. infatti il PLC, situato nel ambiente teatro, non comunicava nè con la UTA, nè con il display situato nella aula di informatica.  Si è proceduto al caricamento sul controllore e sui display in loco del programma sviluppato, oltre alla modifica di alcuni parametri di sviluppo, voluti dal cliente.  
 Data la condizione del cablaggio della rete locale del sistema, è stato necessario un'ulteriore intervento, dopo la messa a punto della stessa da parte degli installatori. Nel secondo intervento si è verificato che la rete fosse effettivamente funzionasse effettuando un operazione di ping da un pc collegato alla rete, ai vari nodi.  
 Dopo la verifica si è proceduto a controllare il funzionamento della UTA. Il suo funzionamento può essere controllato attraverso la comunicazione via rete locale IP dal controllore. Il programma, in base all'orario, alla temperatura e alla quantità di CO2 nell'aria, regola il flusso d'aria negli ambienti e la sua temperatura.   
-La velocità delle ventole, e quindi il flusso di aria, viene controllato tramite un algoritmo di controllo PID. 
+La velocità delle ventole, e quindi il flusso di aria, viene controllato tramite un algoritmo di controllo PID.    
 
+## Sopraluogo per un impianto di Illuminazione alla [Fondazione Teatro Ragazzi e Giovani Onlus](https://casateatroragazzi.it/)    
+
+Il mio supervisore mi ha dato la possibilità di presiedere ad una prima fase di valutazione di un nuovo progetto di cui l'azienda stava prendendosi carico.     
+La struttura in questione presentava già un vetusto e problematico impianto di automazione e gestione delle luci all'interno dei vari ambienti, quindi si è affidata alla V.R.A. per concordare la messa in servizio di un nuovo impianto in grado di integrare e ampliare il sistema di illuminazione di ambienti dediti a uffici e palcoscenici.  
+Il sopraluogo è consistito di un colloquio con un responsabile dello stabile affinchè spiegasse lo stato attuale dell'impianto e le modifiche che si intendevano effettuare, dopodichè si è proceduto a verificare quali interventi fossero necessari e la stima del loro costo complessivo. 
+
+
+# Conoscenze acquisite
+
+Durante questo tirocinio ho avuto modo di apprendere il funzionamento 
 
 
 

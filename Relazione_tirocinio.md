@@ -74,7 +74,7 @@ Gli estensori di porte più usati sono il [MIX38-IP](https://www.ismacontrolli.c
 Vengono collegati al PLC principale tramite interfaccia Modbus e permettono di estendere virtualmente, all'interno del Sedona Framework, le porte fisiche del controllore.
 
 I display più utilizzati sono il [GTSmart-07](https://www.ismacontrolli.com/en/gtsmart-07.html) e il [GTSmart-010](https://www.ismacontrolli.com/pl/gtsmart-010.html).  
-Questi dispositivi sono unità di elaborazione indipendenti dotate di touchscreen con hardware non specificato dal produttore, che montano Linux RT. Per programmarli ci si serve di un software chiamato JMobile che permette di importare le variabili create sul PLC e di modificarle a piacimento attraverso un'interfaccia grafica.  
+Questi dispositivi sono unità di elaborazione indipendenti dotate di touchscreen con hardware non specificato dal produttore, che montano Linux RT. Per programmarli ci si serve di un software chiamato [JMobile](https://www.exorint.com/it/prodotti/software/jmobile) che permette di importare le variabili create sul PLC e di modificarle a piacimento attraverso un'interfaccia grafica.  
 Quest'ultima viene sviluppata anch'essa su questo software che, tramite un editor grafico, permette di sviluppare in modo semplice un'interpretazione grafica dell'impianto e del suo funzionamento in modo da mettere nelle mani del cliente le sue principali funzioni.  
   
 
@@ -89,7 +89,7 @@ La prima fase è quella in cui viene accettata la commessa e bisogna identificar
 ### Fase di disegno dei collegamenti hardware
 
 In questa fase della commessa, dopo aver decretato di quali apparati hardware necessita l'impianto, si definisce come questi verranno collegati, cioè, fisicamente, a quale ingresso viene collegato ogni sensore, attuatore, pompa, ventola e sistema controllato dal PLC.  
-Gli schemi in questione vengono disegnati tramite software come DraftSight e, dopo la revisione di un ingegnere, inviati agli installatori che si occuperanno di installare fisicamente l'impianto in loco.  
+Gli schemi in questione vengono disegnati tramite software come [DraftSight](https://www.draftsight.com/it) e, dopo la revisione di un ingegnere, inviati agli installatori che si occuperanno di installare fisicamente l'impianto in loco.  
 
 ### Fase di sviluppo della logica del PLC
 
@@ -124,7 +124,12 @@ Il primo impianto a cui ho avuto la possibilità di lavorare è inerente ad un s
 È composto da:   
 
 1) Due recuperatori d'aria, cioè dispositivi che permettono di effettuare uno scambio di aria nell'ambiente recuperando energia accoppiando temicamente il flusso d'aria uscente con quello entrante.  
-2) Un sistema VRF (Variable Refrigerant Flow), cioè un sistema di climatizzazione centralizzato che permette di aumentare l'efficienza energetica tramite la modulazione del flusso di refrigerante in ciascuna zona. 
+2) Un sistema VRF (Variable Refrigerant Flow), cioè un sistema di climatizzazione centralizzato che permette di aumentare l'efficienza energetica tramite la modulazione del flusso di refrigerante in ciascuna zona.   
+
+Di cui sotto lo schema:   
+
+
+![schema](./immagini/primo%20impianto/25226%20-%20Q.E.%20di%20Regolazione_RevB.pdf)
 
 Il controllore designato per questo incarico è l'ISMA-Controlli AAC20 in collegamento con un display touchscreen GTSmart 07. 
 Il VRF fornisce al PLC le temperature di ogni stanza, lo stato di accensione dei fan coil (apparato addetto all'effusione dell'aria climatizzata negli ambienti) e permette di modificare il setpoint di temperatura in ogni stanza.  
@@ -133,19 +138,20 @@ una lettura delle temperature dal VRF, la creazione di una schedule oraria per l
 La maggior parte del tempo impiegato a sviluppare questo progetto è stata spesa nella comprensione del funzionamento di un impianto di climatizzazione, dei programmi utilizzati, quali JMobile, ISMATool e YABE, dei protocolli BACnet e Modbus e del Sedona Framework.       
 Alla fine della programmazione il sistema è in grado di modificare i setpoint di velocità delle ventole dei recuperatori e di temperatura di 8 ambienti differenti. Questo sia tramite il display integrato nel PLC che quello del touchscreen.      
 Purtroppo non ho avuto la possibilità di presediere durante la messa in servizio del sistema.  
-L'impianto ha tre possibili stati di funzionamento: On, Off e Auto (in modalità auto si segue un programma orario impostato dall'utente). 
+L'impianto ha tre possibili stati di funzionamento: On, Off e Auto (in quest'ultima segue un programma orario impostato dall'utente). 
 
-![enable](./immagini/Screenshot%202025-02-21%20171153.png)    
+![enable](./immagini/primo%20impianto/Screenshot%202025-02-21%20171153.png)    
 
 Se il sistema è abilitato, in base ai setpoint impostati dall'utente, viene inviato il comando inerente alla velocità dei ventilatori. Il segnale viene inviato dal PLC al controllore del recuperatore come segnale analogico con ampiezza che varia linearmente da zero Volt, potenza dissipata dai ventilatori nulla, fino a dieci Volt, potenza dissipata massima.  
 
-![setpoint ventilatori](./immagini/Screenshot%202025-02-21%20171140.png)   
+![setpoint ventilatori](./immagini/primo%20impianto/Screenshot%202025-02-21%20171140.png)   
 
 I setpoint di temperatura inerenti ai vari ambienti vengono semplicemente acquisiti dal touchscreen, o dal display LCD integrato nel PLC come sistema di backup, e inviati, tramite protocollo Modbus, al VRF.    
 
 
 # Secondo impianto
 
+Il secondo impianto di cui mi sono occupato riguarda un ospedale situato a Giaveno. 
 <br> <br>
 
 # Altre esperienze

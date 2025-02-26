@@ -25,7 +25,13 @@ Struttura:
     - [Fase di stesura del manuale di utilizzo](#fase-di-stesura-del-manuale-di-utilizzo)
     - [Fase di manutenzione](#fase-di-manutenzione)
 - [Primo impianto](#primo-impianto)
+  - [Logica di programmazione](#logica-di-programmazione)
 - [Secondo impianto](#secondo-impianto)
+  - [Logica di programmazione](#logica-di-programmazione-1)
+    - [Ventilatori](#ventilatori)
+    - [Umidificazione](#umidificazione)
+    - [Termoregolazione](#termoregolazione)
+    - [pompe](#pompe)
 - [Altre esperienze](#altre-esperienze)
   - [Messe in servizio](#messe-in-servizio)
     - [Condominio caselle, via gibellini](#condominio-caselle-via-gibellini)
@@ -120,22 +126,21 @@ Se si è stilato col cliente un contratto di manutenzione, in caso di necessità
 
 # Primo impianto
 
-Il primo impianto a cui ho avuto la possibilità di lavorare è inerente ad un sistema di ricircolo dell'aria e riscaldamento.  
+Il primo impianto a cui ho avuto la possibilità di lavorare è inerente ad un sistema di ricircolo dell'aria e riscaldamento ([schema elettrico](https://github.com/davidedidomenico/relazione_tirocinio/blob/main/immagini/primo%20impianto/25226%20-%20Q.E.%20di%20Regolazione_RevB.pdf)).  
 È composto da:   
 
 1) Due recuperatori d'aria, cioè dispositivi che permettono di effettuare uno scambio di aria nell'ambiente recuperando energia accoppiando temicamente il flusso d'aria uscente con quello entrante.  
 2) Un sistema VRF (Variable Refrigerant Flow), cioè un sistema di climatizzazione centralizzato che permette di aumentare l'efficienza energetica tramite la modulazione del flusso di refrigerante in ciascuna zona.   
 
-Di cui sotto lo schema:   
+La maggior parte del tempo impiegato a sviluppare questo progetto è stata spesa nella comprensione del funzionamento di un impianto di climatizzazione, dei programmi utilizzati, quali JMobile, ISMATool e YABE, dei protocolli BACnet e Modbus e del Sedona Framework. 
 
-
-![schema](./immagini/primo%20impianto/25226%20-%20Q.E.%20di%20Regolazione_RevB.pdf)
+## Logica di programmazione
 
 Il controllore designato per questo incarico è l'ISMA-Controlli AAC20 in collegamento con un display touchscreen GTSmart 07. 
 Il VRF fornisce al PLC le temperature di ogni stanza, lo stato di accensione dei fan coil (apparato addetto all'effusione dell'aria climatizzata negli ambienti) e permette di modificare il setpoint di temperatura in ogni stanza.  
-Come primo impianto realizzato, la logica di funzionamento prevede:   
+La logica di funzionamento prevede:   
 una lettura delle temperature dal VRF, la creazione di una schedule oraria per l'attivazione dell'impianto e la regolazione dei setpoint di velocità delle ventole dei recuperatori.     
-La maggior parte del tempo impiegato a sviluppare questo progetto è stata spesa nella comprensione del funzionamento di un impianto di climatizzazione, dei programmi utilizzati, quali JMobile, ISMATool e YABE, dei protocolli BACnet e Modbus e del Sedona Framework.       
+      
 Alla fine della programmazione il sistema è in grado di modificare i setpoint di velocità delle ventole dei recuperatori e di temperatura di 8 ambienti differenti. Questo sia tramite il display integrato nel PLC che quello del touchscreen.      
 Purtroppo non ho avuto la possibilità di presediere durante la messa in servizio del sistema.  
 L'impianto ha tre possibili stati di funzionamento: On, Off e Auto (in quest'ultima segue un programma orario impostato dall'utente). 
@@ -151,7 +156,73 @@ I setpoint di temperatura inerenti ai vari ambienti vengono semplicemente acquis
 
 # Secondo impianto
 
-Il secondo impianto di cui mi sono occupato riguarda un ospedale situato a Giaveno. 
+Il secondo impianto, di cui ho disegnato lo [schema](https://github.com/davidedidomenico/relazione_tirocinio/blob/main/immagini/secondo%20impianto/Schemi%20Regolazione%20Ospedale%20Giaveno.pdf) e programmato il PLC, riguarda un ospedale situato a Giaveno. Una [UTA](https://github.com/davidedidomenico/relazione_tirocinio/blob/main/immagini/secondo%20impianto/2215_def-ese_me10_Schema_R1.pdf) (unità trattamento aria), cioè un sistema in grado di creare un ricircolo d'aria scaldata o raffreddata in base alle necessità.  
+È dotata di 
+
+1) Batteria di recupero. Dispositivo che permette di immagazzinare energia termica derivante dal flusso di aria di recupero, cioè quella in uscita dall'ambiente, utilizzata per scaldare o raffreddare quella di mandata, cioè quella da immettere nell'ambiente.  
+Viene effettuato tramite un circuito dell'acqua ai cui estremi sono presenti due serpentine, cioè un ristringimento della sezione che permette di trasferire più efficacemente il calore, mostrando al flusso d'aria una superfice esposta maggiore.
+
+ 
+
+2) Batteria di riscaldamento. Parte atta al riscaldamento del flusso d'aria di mandata.
+
+3) Batteria di raffreddamento. Parte dedita al raffreddamento dell'aria di mandata.
+
+4) Umidificatore. Dispositivo in grado di nebulizzare dell'acqua nel flusso di aria di mandata.
+
+5) Pompe. Una per ogni batteria. Nello specifico la logica permette di controllare quelle della batteria di recupero, di riscaldo e di raffreddamento.  
+
+I dispositivi elettronici utlizzati in questo impianto sono stati: controllore AAC20-LCD, espansore di porte MIX38 e un touchscreen GTSmart07.  
+
+## Logica di programmazione
+
+Il sistema viene attivato da una variabile, modificabile tramite il display touch o dalla programmazione oraria se impostato in modalità automatica. 
+
+### Ventilatori
+
+Se la variabile di attivazione dell'impianto è attiva e l'allarme antigelo è disattivo (allarme che si attiva nel caso in cui la temperatura dell'acqua nel sistema scenda sotto una soglia determinata, per evitarne il congelamento), viene comandata l'apertura delle serrande che permettono il passaggio dei flussi di mandata e ripresa. 
+
+![serrande](./immagini/secondo%20impianto/WhatsApp%20Image%202025-02-24%20at%2017.13.25.jpeg)
+
+Se lo stato delle serrande non corrisponde al comando inviato, dopo un determinato delay, viene inviato un allarme, altrimenti viene inviato un comando ai ventilatori di mandata e ripresa. La regolazione del comando in questione è determinata da un algoritmo di controllo di tipo PID (proportional-integral-derivative), i cui parametri vengono decisi al momento della messa in servizio dell'impianto, siccome non si conosce a priori l'inerzia dei ventilatori. Il controllo si basa su dei setpoint di pressione, rilevata come differenza tra quella acquisita a monte e a valle del rispettivo ventilatore.
+
+![pid ventilatori](./immagini/secondo%20impianto/Screenshot%202025-02-24%20154226.png)
+
+### Umidificazione
+
+Il sistema è in grado di umidificare o deumidificare l'aria all'interno dell'ambiente, rispettivamente, tramite un nebulizzatore e la batteria di raffreddamento.   
+Per deumidificare, infatti, si sfrutta la dipendenza del punto di rugiada dalla temperatura. Il fenomeno per il quale, abbassando la temperatura, a parità di pressione, un determinato volume d'aria è in grado di contenere una quantità minore di vapore acqueo. Quindi, raffreddando il volume di aria di mandata, è possibile far condensare una quantità d'acqua proporzionale al decremento di temperatura.  
+Il controllo del segnale inerente all'intensità dell'azione umidificante, o deumidificante viene effettuato tramite due algoritmi di controllo PID.  
+Quello inerente all'umidificatore controlla l'umidità presente nel flusso d'aria di ripresa e, in base al setpoint impostato, regola la risposta del nebulizzatore.   
+Quello inerente all'azione deumidificante controlla l'umidità del medesimo flusso e, analogamente, in base al setpoint impostato, regola la risposta della batteria di raffreddamento.  
+Un altro parametro da tenere in considerazione è l'umidità dell'aria di mandata, siccome un valore troppo alto potrebbe far uscire acqua dall'umidificatore. Quindi viene messo in parallelo un ulteriore controllo PID, ma con setpoint l'umidità di mandata massima e, con variabile controllata l'umidità di mandata. Di questi due controlli viene poi preso in output il valore minimo.  
+
+![umidificazione](./immagini/secondo%20impianto/Screenshot%202025-02-24%20154436.png)
+
+Inoltre l'azione umidificante viene comandata solo d'inverno e quella deumidificante solo d'estate, a causa dei naturali livelli di umidità presenti a Torino.  
+
+### Termoregolazione
+
+Il sistema di termoregolazione utilizza la variabile di attivazione come enable e si basa su una variabile che indica la stagione per discernere il funzionamento in modalità riscaldamento o raffreddamento.   
+
+In base alla stagione selezionata si interviene sulla temperatura dell'ambiente con un PID diverso, uno per l'inverno e uno per l'estate.   
+Il primo agisce controllando la temperatura di ripresa in uscita dall'ambiente e ne modifica il valore, agendo sulla batteria di riscaldamento, in base al setpoint.  
+Il secondo agisce controllando la stessa temperatura di ripresa e modificandone il valore, agendo, però, sulla batteria di raffreddamento, in base al setpoint impostato.   
+Per entrambi i sottosistemi viene anche eseguito un controllo della temperatura di mandata dell'aria nell'ambiente, in modo da evitare che venga immessa aria a temperatura troppo bassa o troppo alta, così da non intaccare il comfort degli ospiti.    
+
+### pompe
+
+Le pompe vengono comandate con due logiche diverse, una per la pompa del circuito di recupero, una per quelle dei circuiti di raffreddamento e riscaldamento.   
+
+La pompa di recupero, se l'impianto è abilitato, viene sempre accesa e va in allarme nel caso in cui non ci sia plausibilità tra lo stato della stessa e il comando impartitole, oppure se il controllore che ne gestisce la comunicazione con il PLC dell'impianto rileva un allarme.
+
+Le altre due pompe vengono attivate nel caso in cui il carico richiesto al sistema di riscaldamento o raffreddamento sia diverso da zero. Siccome si tratta di pompe gemellari, cioè ogni pompa è composta da due pompe, progettate per non lavorare mai simultaneamente, il comando 
+
+
+
+
+ 
+ 
 <br> <br>
 
 # Altre esperienze
